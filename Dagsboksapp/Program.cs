@@ -102,9 +102,9 @@ namespace Dagsboksapp
             }
             Console.WriteLine("");
             Console.WriteLine("Your diary:");
-            foreach (var entry in entries)
+            for (int i = 0; i < entries.Count; i++)
             {
-                Console.WriteLine(entry);
+                Console.WriteLine($"{i + 1}. {entries[i]}");
                 Console.WriteLine("");
             }
             Console.WriteLine($"You have made:{entries.Count} entries");
