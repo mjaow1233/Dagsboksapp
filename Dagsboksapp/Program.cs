@@ -1,11 +1,12 @@
 ﻿using System.ComponentModel.Design;
 
-namespace Dagboksapp
+namespace Dagsboksapp
 {
+
     internal class Program
     {
         private static readonly string dagbokFilePath = "dagbok.txt";
-        private static string? entry;
+
 
         static void Main(string[] args)
         {
@@ -24,88 +25,60 @@ namespace Dagboksapp
                 switch (choice)
                 {
                     case MenuChoice.AddEntry:
-                        Console.WriteLine("Lägger till en ny uppgift...");
+                        Console.WriteLine("Adding a new entry");
                         AddEntry();
                         break;
-                    case MenuChoice.ViewEntry:
-                        Console.WriteLine("Visar alla uppgifter...");
+                    /*case MenuChoice.ViewEntry:
+                        Console.WriteLine("View all entries");
                         ViewEntry();
                         break;
                     case MenuChoice.SearchEntry:
-                        Console.WriteLine("Visar alla uppgifter...");
+                        Console.WriteLine("Search for an entry");
+                        string search = (Console.ReadLine());
                         SearchEntry();
                         break;
 
                     case MenuChoice.SaveFile:
-                        Console.WriteLine("Visar alla uppgifter...");
-                        savefile();
+                        Console.WriteLine("Save to file");
+                        Savefile();
                         break;
-                    case MenuChoice.Loadfile:
-                        Console.WriteLine("Visar alla uppgifter...");
-                        Loadfile();
-                        break;
+                    case MenuChoice.LoadFile:
+                        Console.WriteLine("Load file");
+                        LoadFile();
+                        break;*/
 
                     case MenuChoice.Exit:
-                        Console.WriteLine("Avslutar programmet. Hej då!");
+                        Console.WriteLine("Exit the program");
                         return;
                     default:
-                        Console.WriteLine("Ogiltigt val. Försök igen.");
+                        Console.WriteLine("That's not the right number");
                         break;
                 }
 
             }
         }
 
-        private static void ViewEntry()
-        {
-            try
-            {
-                if (!File.Exists(dagbokFilePath))
-                {
-                    Console.WriteLine("Inga uppgifter hittades.");
-                    return;
-                }
-
-                string[] entries = File.ReadAllLines(dagbokFilePath);
-                if (entries.Length == 0)
-                {
-                    Console.WriteLine("Inga uppgifter hittades.");
-                    return;
-                }
-
-                Console.WriteLine("Dina uppgifter:");
-                for (int i = 0; i < entry.Length; i++)
-                {
-                    Console.WriteLine($"{i + 1}. {entries[i]}");
-                }
-                Console.WriteLine($"Totalt: {entries.Length} uppgifter.");
-
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Ett fel uppstod vid läsning av uppgifterna: {ex.Message}");
-            }
-        }
+        
 
         private static void AddEntry()
         {
-            Console.WriteLine("skriv in");
+            Console.WriteLine("Type.");
             string? entry = Console.ReadLine();
             if (string.IsNullOrWhiteSpace(entry))
             {
-                Console.WriteLine("Uppgiften kan inte vara tom. Försök igen.");
+                Console.WriteLine("Entry cannot be empty, try again.");
                 return;
             }
             try
             {
                 string entryWithTimestamp = $"{DateTime.Now}: {entry}";
                 File.AppendAllText(dagbokFilePath, entryWithTimestamp + Environment.NewLine);
-                Console.WriteLine("Uppgiften har lagts till.");
+                Console.WriteLine("Entry recorded.");
 
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Ett fel uppstod vid lagring av uppgiften: {ex.Message}");
+                Console.WriteLine($"File did not save {ex.Message}");
             }
 
         }
@@ -120,5 +93,55 @@ namespace Dagboksapp
             return MenuChoice.Invalid;
 
         }
+        private static void SearchEntry()
+        {
+            Console.Write("Todays date: YYMMDD");
+            string? input = Console.ReadLine();
+
+            if (!DateTime.TryParse(input, out DateTime searchDate))
+            {
+                Console.WriteLine("Incorrect format");
+                return;
+            }
+
+            try
+            {
+                if (!File.Exists(dagbokFilePath))
+                {
+                    Console.WriteLine("");
+                    return;
+                }
+
+                string[] entries = File.ReadAllLines(dagbokFilePath);
+                bool found = false;
+
+                foreach (string entry in entries)
+                {
+                   
+                    int firstColon = entry.IndexOf(':');
+                    if (firstColon == -1) continue;
+
+                    string datePart = entry.Substring(0, firstColon);
+                    if (DateTime.TryParse(datePart, out DateTime entryDate))
+                    {
+                        if (entryDate.Date == searchDate.Date)
+                        {
+                            Console.WriteLine(entry);
+                            found = true;
+                        }
+                    }
+                }
+
+                if (!found)
+                {
+                    Console.WriteLine("Nothing found for that date");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+        }
     }
+
 }
