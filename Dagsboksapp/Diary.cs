@@ -30,9 +30,12 @@
             return entries.Where(e => e.Date.Date == date.Date).ToList();
         }
 
-      
-
-       
+        public void Save(string filePath)
+        {
+            var lines = entries.Select(e => e.ToString()).ToArray();
+            File.WriteAllLines(filePath, lines);
         }
+
+
     }
 }

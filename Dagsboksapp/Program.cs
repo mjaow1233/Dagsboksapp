@@ -38,11 +38,11 @@ namespace Dagsboksapp
                         SearchEntry();
                         break;
 
-                   /* case MenuChoice.SaveFile:
+                    case MenuChoice.SaveFile:
                         Console.WriteLine("Save to file");
-                        Savefile();
+                        SaveFile();
                         break;
-                    case MenuChoice.LoadFile:
+                    /*case MenuChoice.LoadFile:
                         Console.WriteLine("Load file");
                         LoadFile();
                         break;*/
@@ -57,9 +57,6 @@ namespace Dagsboksapp
 
             }
         }
-
-
-
 
 
         private static MenuChoice GetMenuChoice()
@@ -87,8 +84,54 @@ namespace Dagsboksapp
             diary.AddEntry(text);
             Console.WriteLine("Entry recorded.");
         }
+        private static void ViewEntry()
+        {
+            var entries = diary.ViewEntry();
+            if (entries.Count == 0)
+            {
+                Console.WriteLine("No entries found.");
+                return;
+            }
+
+            Console.WriteLine("Your diary:");
+            foreach (var entry in entries)
+            {
+                Console.WriteLine(entry);
+            }
+        }
+
+        private static void SearchEntry()
+        {
+            Console.Write("Enter date (YYYY-MM-DD): ");
+            string? input = Console.ReadLine();
+
+            if (!DateTime.TryParse(input, out DateTime searchDate))
+            {
+                Console.WriteLine("Incorrect format");
+                return;
+            }
+
+            var found = diary.FindByDate(searchDate);
+
+            if (found.Count == 0)
+            {
+                Console.WriteLine("Nothing found for that date");
+                return;
+            }
+
+            Console.WriteLine($"Entries for {searchDate:yyyy-MM-dd}:");
+            foreach (var entry in found)
+            {
+                Console.WriteLine(entry);
+            }
+        }
+        private static void SaveFile()
+        {
+            diary.Save(dagbokFilePath);
+        }
 
     }
 }
+
 
 
