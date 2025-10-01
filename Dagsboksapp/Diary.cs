@@ -22,6 +22,7 @@
         public List<Entry> ViewEntry()
         {
             return entries;
+            
         }
 
         public List<Entry> FindByDate(DateTime date)
@@ -48,11 +49,11 @@
 
             foreach (string line in lines)
             {
-                int firstColon = line.IndexOf(':');
-                if (firstColon == -1) continue;
+                
+                if (line.Length < 20) continue;
 
-                string datePart = line.Substring(0, firstColon);
-                string textPart = line.Substring(firstColon + 1).Trim();
+                string datePart = line.Substring(0, 19);
+                string textPart = line.Substring(20).Trim();
 
                 if (DateTime.TryParse(datePart, out DateTime entryDate))
                 {
@@ -60,27 +61,20 @@
                     {
                         Date = entryDate,
                         Text = textPart
-
                     });
-
-                    }
-
-
-
+                }
             }
 
-
         }
-        
+
         public void Save(string filePath)
         {
             List<string> lines = new List<string>();
             foreach (Entry entry in entries)
             {
-                lines.Add(entry.ToString());
+                lines.Add($"{entry.Date} {entry.Text}");
             }
             File.WriteAllLines(filePath, lines);
-            Console.WriteLine("Diary saved");
         }
 
     }

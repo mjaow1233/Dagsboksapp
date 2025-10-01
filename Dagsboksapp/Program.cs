@@ -10,10 +10,11 @@ namespace Dagsboksapp
 
         static void Main(string[] args)
         {
-
+            Console.WriteLine("Welcome to your diary app");
             while (true)
             {
-                Console.WriteLine("Welcome to your diary app");
+                Console.WriteLine("");
+                Console.WriteLine("Choose an option:");
                 Console.WriteLine("1.Add an entry");
                 Console.WriteLine("2.Show all entries");
                 Console.WriteLine("3.Search for an entry");
@@ -25,32 +26,38 @@ namespace Dagsboksapp
                 switch (choice)
                 {
                     case MenuChoice.AddEntry:
+                        Console.WriteLine("");
                         Console.WriteLine("Adding a new entry");
                         AddEntry();
                         break;
                     case MenuChoice.ViewEntry:
+                        Console.WriteLine("");
                         Console.WriteLine("View all entries");
                         ViewEntry();
                         break;
                     case MenuChoice.SearchEntry:
+                        Console.WriteLine("");
                         Console.WriteLine("Search for an entry");
-                        string search = (Console.ReadLine());
                         SearchEntry();
                         break;
 
                     case MenuChoice.SaveFile:
+                        Console.WriteLine("");
                         Console.WriteLine("Save to file");
                         SaveFile();
                         break;
                     case MenuChoice.LoadFile:
+                        Console.WriteLine("");
                         Console.WriteLine("Load file");
                         LoadFile();
                         break;
 
                     case MenuChoice.Exit:
+                        Console.WriteLine("");
                         Console.WriteLine("Exit the program");
                         return;
                     default:
+                        Console.WriteLine("");
                         Console.WriteLine("That's not the right number");
                         break;
                 }
@@ -89,15 +96,18 @@ namespace Dagsboksapp
             var entries = diary.ViewEntry();
             if (entries.Count == 0)
             {
+                Console.WriteLine("");
                 Console.WriteLine("No entries found.");
                 return;
             }
-
+            Console.WriteLine("");
             Console.WriteLine("Your diary:");
             foreach (var entry in entries)
             {
                 Console.WriteLine(entry);
+                Console.WriteLine("");
             }
+            Console.WriteLine($"You have made:{entries.Count} entries");
         }
 
         private static void SearchEntry()
