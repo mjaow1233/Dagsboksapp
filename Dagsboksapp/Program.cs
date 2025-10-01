@@ -6,7 +6,7 @@ namespace Dagsboksapp
     internal class Program
     {
         private static readonly string dagbokFilePath = "dagbok.txt";
-
+        private static Diary diary = new Diary();
 
         static void Main(string[] args)
         {
@@ -28,7 +28,7 @@ namespace Dagsboksapp
                         Console.WriteLine("Adding a new entry");
                         AddEntry();
                         break;
-                    /*case MenuChoice.ViewEntry:
+                    case MenuChoice.ViewEntry:
                         Console.WriteLine("View all entries");
                         ViewEntry();
                         break;
@@ -38,7 +38,7 @@ namespace Dagsboksapp
                         SearchEntry();
                         break;
 
-                    case MenuChoice.SaveFile:
+                   /* case MenuChoice.SaveFile:
                         Console.WriteLine("Save to file");
                         Savefile();
                         break;
@@ -58,30 +58,9 @@ namespace Dagsboksapp
             }
         }
 
-        
 
-        private static void AddEntry()
-        {
-            Console.WriteLine("Type.");
-            string? entry = Console.ReadLine();
-            if (string.IsNullOrWhiteSpace(entry))
-            {
-                Console.WriteLine("Entry cannot be empty, try again.");
-                return;
-            }
-            try
-            {
-                string entryWithTimestamp = $"{DateTime.Now}: {entry}";
-                File.AppendAllText(dagbokFilePath, entryWithTimestamp + Environment.NewLine);
-                Console.WriteLine("Entry recorded.");
 
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"File did not save {ex.Message}");
-            }
 
-        }
 
         private static MenuChoice GetMenuChoice()
         {
@@ -93,55 +72,23 @@ namespace Dagsboksapp
             return MenuChoice.Invalid;
 
         }
-        private static void SearchEntry()
-        {
-            Console.Write("Todays date: YYMMDD");
-            string? input = Console.ReadLine();
 
-            if (!DateTime.TryParse(input, out DateTime searchDate))
+        private static void AddEntry()
+        {
+            Console.Write("Type your entry: ");
+            string? text = Console.ReadLine();
+
+            if (string.IsNullOrWhiteSpace(text))
             {
-                Console.WriteLine("Incorrect format");
+                Console.WriteLine("Entry cannot be empty.");
                 return;
             }
 
-            try
-            {
-                if (!File.Exists(dagbokFilePath))
-                {
-                    Console.WriteLine("");
-                    return;
-                }
-
-                string[] entries = File.ReadAllLines(dagbokFilePath);
-                bool found = false;
-
-                foreach (string entry in entries)
-                {
-                   
-                    int firstColon = entry.IndexOf(':');
-                    if (firstColon == -1) continue;
-
-                    string datePart = entry.Substring(0, firstColon);
-                    if (DateTime.TryParse(datePart, out DateTime entryDate))
-                    {
-                        if (entryDate.Date == searchDate.Date)
-                        {
-                            Console.WriteLine(entry);
-                            found = true;
-                        }
-                    }
-                }
-
-                if (!found)
-                {
-                    Console.WriteLine("Nothing found for that date");
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
-            }
+            diary.AddEntry(text);
+            Console.WriteLine("Entry recorded.");
         }
-    }
 
+    }
 }
+
+
