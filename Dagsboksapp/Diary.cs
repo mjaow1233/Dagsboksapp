@@ -19,7 +19,6 @@
         {
             entries.Add(new Entry { Date = DateTime.Now, Text = text });
         }
-
         public List<Entry> ViewEntry()
         {
             return entries;
@@ -27,15 +26,65 @@
 
         public List<Entry> FindByDate(DateTime date)
         {
-            return entries.Where(e => e.Date.Date == date.Date).ToList();
+            List<Entry> found = new List<Entry>();
+
+            foreach (Entry entry in entries)
+            {
+                if (entry.Date.Date == date.Date)
+                {
+                    found.Add(entry);
+                }
+            }
+
+            return found;
         }
 
+        public void Load(string filePath)
+        {
+            if (!File.Exists(filePath)) return;
+
+            entries.Clear();
+            string[] lines = File.ReadAllLines(filePath);
+
+            foreach (string line in lines)
+            {
+                int firstColon = line.IndexOf(':');
+                if (firstColon == -1) continue;
+
+                string datePart = line.Substring(0, firstColon);
+                string textPart = line.Substring(firstColon + 1).Trim();
+
+                if (DateTime.TryParse(datePart, out DateTime entryDate))
+                {
+                    entries.Add(new Entry
+                    {
+                        Date = entryDate,
+                        Text = textPart
+
+                    });
+
+                    }
+
+
+
+            }
+
+
+        }
+        
         public void Save(string filePath)
         {
-            var lines = entries.Select(e => e.ToString()).ToArray();
+            List<string> lines = new List<string>();
+            foreach (Entry entry in entries)
+            {
+                lines.Add(entry.ToString());
+            }
             File.WriteAllLines(filePath, lines);
+            Console.WriteLine("Diary saved");
         }
-
 
     }
 }
+
+
+

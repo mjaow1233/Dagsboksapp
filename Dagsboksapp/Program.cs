@@ -42,10 +42,10 @@ namespace Dagsboksapp
                         Console.WriteLine("Save to file");
                         SaveFile();
                         break;
-                    /*case MenuChoice.LoadFile:
+                    case MenuChoice.LoadFile:
                         Console.WriteLine("Load file");
                         LoadFile();
-                        break;*/
+                        break;
 
                     case MenuChoice.Exit:
                         Console.WriteLine("Exit the program");
@@ -128,6 +128,10 @@ namespace Dagsboksapp
         private static void SaveFile()
         {
             diary.Save(dagbokFilePath);
+        }
+        private static void LoadFile()
+        {
+            diary.Load(dagbokFilePath);
         }
 
     }
