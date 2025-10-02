@@ -144,7 +144,7 @@ namespace Dagsboksapp
         private static void SaveFile()
         {
             diary.Save(dagbokFilePath);
-            Console.WriteLine("Entries saved.");
+            Console.WriteLine("Entries saved to file.");
         }
         private static void LoadFile()
         {
