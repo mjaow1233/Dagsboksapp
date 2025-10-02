@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.Design;
 using System.Globalization;
+using System.Security.Cryptography;
 
 namespace Dagsboksapp
 {
@@ -98,23 +99,21 @@ namespace Dagsboksapp
         }
         private static void ViewEntry()
         {
-            
-            var entries = diary.ViewEntry();
+            var entries = diary.ViewEntry()
+                               .OrderBy(e => e.Date) 
+                               .ToList();
+
             if (entries.Count == 0)
             {
-                Console.WriteLine("");
                 Console.WriteLine("No entries found.");
                 return;
             }
-            Console.WriteLine("");
-            Console.WriteLine($"You have made:{entries.Count} entries");
-            Console.WriteLine("");  
+
+            Console.WriteLine($"You have made: {entries.Count} entries");
             for (int i = 0; i < entries.Count; i++)
             {
                 Console.WriteLine($"{i + 1}. {entries[i]}");
-                
             }
-            
         }
 
         private static void SearchEntry()
@@ -124,6 +123,7 @@ namespace Dagsboksapp
             while (true)
             {
                 Console.Write("Enter date (YYYY-MM-DD): ");
+                Console.Write("");
                 string? input = Console.ReadLine();
 
                 if (DateTime.TryParseExact(input, "yyyy-MM-dd",
@@ -141,14 +141,21 @@ namespace Dagsboksapp
 
             if (found.Count == 0)
             {
+                Console.WriteLine("");
                 Console.WriteLine("No entries found for that date.");
+                Console.WriteLine("Press any key to continue");
+                Console.ReadKey(true);
                 return;
             }
 
             Console.WriteLine($"Entries for {searchDate:yyyy-MM-dd}:");
             foreach (var entry in found)
             {
+                Console.WriteLine("");
                 Console.WriteLine(entry);
+                Console.WriteLine("Press any key to continue");
+                Console.ReadKey(true);
+
             }
         }
         private static void SaveFile()
