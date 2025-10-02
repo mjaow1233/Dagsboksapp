@@ -109,7 +109,7 @@ namespace Dagsboksapp
             }
             Console.WriteLine($"You have made:{entries.Count} entries");
         }
-
+       
         private static void SearchEntry()
         {
             Console.Write("Enter date (YYYY-MM-DD): ");
@@ -125,7 +125,7 @@ namespace Dagsboksapp
 
             if (found.Count == 0)
             {
-                Console.WriteLine("Nothing found for that date");
+                Console.WriteLine("No entries found");
                 return;
             }
 
