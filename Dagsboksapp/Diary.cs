@@ -22,6 +22,8 @@ namespace Dagsboksapp
         {
             DateTime entryDate;
 
+
+
             while (true)
             {
                 Console.Write("Type date (yyyy-MM-dd) or press Enter for today: ");
@@ -29,37 +31,54 @@ namespace Dagsboksapp
 
                 if (string.IsNullOrWhiteSpace(input))
                 {
-                    entryDate = DateTime.Now.Date; 
+                    entryDate = DateTime.Now.Date;
                     break;
                 }
 
-                try
+                if (DateTime.TryParseExact(input, "yyyy-MM-dd", CultureInfo.InvariantCulture,
+                                           DateTimeStyles.None, out entryDate))
                 {
-                    entryDate = DateTime.ParseExact(input, "yyyy-MM-dd", CultureInfo.InvariantCulture);
                     break;
                 }
-                catch (FormatException)
+                else
                 {
                     Console.WriteLine("Invalid date format. Please use yyyy-MM-dd.");
                 }
             }
 
-        
             var newEntry = new Entry { Date = entryDate, Text = text };
 
-          
-            entries.Add(newEntry);
-
-            if (!entryDict.ContainsKey(entryDate.Date))
-            {
-                entryDict[entryDate.Date] = new List<Entry>();
-            }
-            entryDict[entryDate.Date].Add(newEntry);
-
+            AddToCollections(newEntry);
             Console.WriteLine("Entry added successfully.");
         }
+        public bool DeleteEntry(int index)
+        {
+            if (index < 0 || index >= entries.Count) return false;
 
+            var entry = entries[index];
+            entries.RemoveAt(index);
 
+            if (entryDict.TryGetValue(entry.Date.Date, out var list))
+            {
+                list.Remove(entry);
+                if (list.Count == 0)
+                {
+                    entryDict.Remove(entry.Date.Date);
+                }
+            }
+
+            return true;
+        }
+        private void AddToCollections(Entry entry)
+        {
+            entries.Add(entry);
+
+            if (!entryDict.ContainsKey(entry.Date.Date))
+            {
+                entryDict[entry.Date.Date] = new List<Entry>();
+            }
+            entryDict[entry.Date.Date].Add(entry);
+        }
 
 
         public List<Entry> ViewEntry()
@@ -70,17 +89,11 @@ namespace Dagsboksapp
 
         public List<Entry> FindByDate(DateTime date)
         {
-            List<Entry> found = new List<Entry>();
-
-            foreach (Entry entry in entries)
+            if (entryDict.TryGetValue(date.Date, out var found))
             {
-                if (entry.Date.Date == date.Date)
-                {
-                    found.Add(entry);
-                }
+                return found;
             }
-
-            return found;
+            return new List<Entry>();
         }
 
         public void Load(string filePath)
@@ -95,17 +108,25 @@ namespace Dagsboksapp
 
                 string[] lines = File.ReadAllLines(filePath);
                 List<Entry> fileEntries = new List<Entry>();
+                var fileDict = new Dictionary<DateTime, List<Entry>>();
 
                 foreach (string line in lines)
                 {
-                    if (line.Length < 11) continue; // Minsta längd för "yyyy-MM-dd: "
+                    if (line.Length < 11) continue;
                     string datePart = line.Substring(0, 10);
                     string textPart = line.Substring(11).Trim();
 
                     if (DateTime.TryParseExact(datePart, "yyyy-MM-dd", CultureInfo.InvariantCulture,
                                                DateTimeStyles.None, out DateTime entryDate))
                     {
-                        fileEntries.Add(new Entry { Date = entryDate, Text = textPart });
+                        var entry = new Entry { Date = entryDate, Text = textPart };
+                        fileEntries.Add(entry);
+
+                        if (!fileDict.ContainsKey(entryDate))
+                        {
+                            fileDict[entryDate] = new List<Entry>();
+                        }
+                        fileDict[entryDate].Add(entry);
                     }
                 }
 
@@ -118,28 +139,24 @@ namespace Dagsboksapp
 
                     if (input == "1")
                     {
-
                         foreach (var entry in fileEntries)
                         {
-                            if (!entries.Any(x => x.Date.Date == entry.Date.Date && x.Text == entry.Text)) //anti dubletter.
+                            if (!entries.Any(x => x.Date.Date == entry.Date.Date && x.Text == entry.Text))
                             {
-                                entries.Add(entry);
+                                AddToCollections(entry);
                             }
                         }
                     }
-                    else if (input == "2")
-                    {
-                        entries = fileEntries;
-                    }
                     else
                     {
-                        Console.WriteLine("Invalid choice. Overwriting by default.");
                         entries = fileEntries;
+                        entryDict = fileDict;
                     }
                 }
                 else
                 {
                     entries = fileEntries;
+                    entryDict = fileDict;
                 }
 
                 Console.WriteLine($"Diary loaded from {filePath}.");
@@ -185,6 +202,7 @@ namespace Dagsboksapp
                                 if (!linesToSave.Any(x => x.StartsWith(entryDate.ToString("yyyy-MM-dd")) && x.Contains(textPart)))
                                 {
                                     linesToSave.Add($"{entryDate:yyyy-MM-dd}: {textPart}");
+                                    AddToCollections(new Entry { Date = entryDate, Text = textPart });
                                 }
                             }
                         }
@@ -205,7 +223,19 @@ namespace Dagsboksapp
                 Console.ReadKey(true);
             }
         }
+
+        public bool RemoveEntry(int index)
+        {
+            if (index >= 0 && index < entries.Count)
+            {
+                entries.RemoveAt(index); 
+                return true;            
+            }
+            return false; 
+        }
+
     }
 }
+
 
 

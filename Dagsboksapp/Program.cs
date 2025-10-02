@@ -18,14 +18,14 @@ namespace Dagsboksapp
             while (true)
             {
                 Console.WriteLine("");
-                Console.WriteLine("Choose an option:");
-                Console.WriteLine("1.Add an entry");
-                Console.WriteLine("2.Show all entries");
-                Console.WriteLine("3.Search for an entry");
-                Console.WriteLine("4.Edit an entry");
-                Console.WriteLine("5.Save file");
-                Console.WriteLine("6.Load file");
-                Console.WriteLine("7.Exit");
+                Console.WriteLine("1. Add an entry");
+                Console.WriteLine("2. Show all entries");
+                Console.WriteLine("3. Search for an entry");
+                Console.WriteLine("4. Edit an entry");
+                Console.WriteLine("5. Delete an entry");
+                Console.WriteLine("6. Save file");
+                Console.WriteLine("7. Load file");
+                Console.WriteLine("8. Exit");
                 Console.Write("");
 
                 MenuChoice choice = GetMenuChoice();
@@ -51,14 +51,20 @@ namespace Dagsboksapp
                         Console.WriteLine("Chose an entry to edit");
                         EditEntry();
                         break;
+                    case MenuChoice.DeleteEntry:
+                        Console.WriteLine("");
+                        Console.WriteLine("Chose an entry to delete");
+                        DeleteEntry();
+                        break;
+
                     case MenuChoice.SaveFile:
                         Console.WriteLine("");
-;
+                        ;
                         SaveFile();
                         break;
                     case MenuChoice.LoadFile:
                         Console.WriteLine("");
-;
+                        ;
                         LoadFile();
                         break;
 
@@ -99,7 +105,7 @@ namespace Dagsboksapp
             }
 
             diary.AddEntry(text);
-            Console.WriteLine("Entry added.");
+
         }
         private static void ViewEntry()
         {
@@ -165,7 +171,7 @@ namespace Dagsboksapp
         private static void SaveFile()
         {
             diary.Save(dagbokFilePath);
-            
+
         }
         private static void LoadFile()
         {
@@ -212,10 +218,54 @@ namespace Dagsboksapp
                 selectedEntry.Text = newText;
             }
         }
+        private static void DeleteEntry()
+        {
+            var entries = diary.ViewEntry();
+
+            if (entries.Count == 0)
+            {
+                Console.WriteLine("No entries to delete.");
+                return;
+            }
+
+            Console.WriteLine("Your diary entries:");
+            for (int i = 0; i < entries.Count; i++)
+            {
+                Console.WriteLine($"{i + 1}. {entries[i]}");
+            }
+
+            int choice;
+            while (true)
+            {
+                Console.Write("Select entry number to delete: ");
+                string? input = Console.ReadLine();
+
+                if (int.TryParse(input, out choice) && choice >= 1 && choice <= entries.Count)
+                {
+                    break;
+                }
+                Console.WriteLine("Invalid input, try again.");
+            }
+
+            if (diary.RemoveEntry(choice - 1))
+            {
+                Console.WriteLine("Entry removed.");
+            }
+            else
+            {
+                Console.WriteLine("Failed to remove entry.");
+            }
+        }
+
     }
 }
 
-    
+
+
+
+
+
+
 
 
 
