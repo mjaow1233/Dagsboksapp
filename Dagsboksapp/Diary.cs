@@ -21,23 +21,23 @@ namespace Dagsboksapp
         {
             DateTime entryDate;
 
-            while (true) 
+            while (true)
             {
                 Console.Write("Type date (yyyy-MM-dd) or press Enter for today: ");
                 string? input = Console.ReadLine();
 
                 if (string.IsNullOrWhiteSpace(input))
                 {
-                    
+
                     entryDate = DateTime.Now;
                     break;
                 }
 
                 try
                 {
-                    
+
                     entryDate = DateTime.ParseExact(input, "yyyy-MM-dd", CultureInfo.InvariantCulture);
-                    break; 
+                    break;
                 }
                 catch (FormatException)
                 {
@@ -45,9 +45,9 @@ namespace Dagsboksapp
                 }
             }
 
-           
+
             entries.Add(new Entry { Date = entryDate, Text = text });
-           
+
         }
 
 
@@ -94,6 +94,7 @@ namespace Dagsboksapp
                         Date = entryDate,
                         Text = parts[1]
                     });
+
                 }
             }
         }
@@ -101,16 +102,25 @@ namespace Dagsboksapp
 
         public void Save(string filePath)
         {
-            List<string> lines = new List<string>();
-            foreach (Entry entry in entries)
+            try
             {
-                lines.Add($"{entry.Date:yyyy-MM-dd}|{entry.Text}");
-            }
-            File.WriteAllLines(filePath, lines);
-        }
+                List<string> lines = new List<string>();
+                foreach (Entry entry in entries)
+                {
+                    lines.Add(entry.ToString());
+                }
 
+                File.WriteAllLines(filePath, lines);
+                Console.WriteLine($"Diary saved to {filePath}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Could not save to file: {ex.Message}");
+            }
+        }
     }
 }
+
 
 
 

@@ -175,20 +175,52 @@ namespace Dagsboksapp
         private static void LoadFile()
         {
             diary.Load(dagbokFilePath);
-            Console.WriteLine("Entries loaded.");
-            Console.WriteLine("Press any key to continue");
-            Console.ReadKey(true);
+
         }
-        /*private static void EditEntry()
+        private static void EditEntry()
         {
             var entries = diary.ViewEntry();
 
-            
+            if (entries.Count == 0)
             {
-               
-            }*/
+                Console.WriteLine("No entries to edit.");
+                return;
+            }
+
+            Console.WriteLine("Your diary entries:");
+            for (int i = 0; i < entries.Count; i++)
+            {
+                Console.WriteLine($"{i + 1}. {entries[i]}");
+            }
+
+            int choice;
+            while (true)
+            {
+                Console.Write("Edit Entry: ");
+                string? input = Console.ReadLine();
+
+                if (int.TryParse(input, out choice) && choice >= 1 && choice <= entries.Count)
+                {
+                    break;
+                }
+
+                Console.WriteLine("Invalid input try again.");
+            }
+            var selectedEntry = entries[choice - 1];
+
+            Console.WriteLine("");
+            Console.Write("Enter new text");
+            Console.WriteLine("");
+            string? newText = Console.ReadLine();
+            if (!string.IsNullOrWhiteSpace(newText))
+            {
+                selectedEntry.Text = newText;
+            }
+        }
     }
 }
+
+    
 
 
 
