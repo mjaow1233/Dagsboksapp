@@ -13,8 +13,9 @@ namespace Dagsboksapp
         AddEntry = 1,
         ViewEntry = 2,
         SearchEntry = 3,
-        SaveFile = 4,
-        LoadFile = 5,
-        Exit = 6,
+        EditEntry =4,
+        SaveFile = 5,
+        LoadFile = 6,
+        Exit = 7,
     }
 }

@@ -9,7 +9,7 @@ namespace Dagsboksapp
     {
         private static readonly string dagbokFilePath = "dagbok.txt";
         private static Diary diary = new Diary();
-        
+
 
         static void Main(string[] args)
         {
@@ -22,9 +22,10 @@ namespace Dagsboksapp
                 Console.WriteLine("1.Add an entry");
                 Console.WriteLine("2.Show all entries");
                 Console.WriteLine("3.Search for an entry");
-                Console.WriteLine("4.Save file");
-                Console.WriteLine("5.Load file");
-                Console.WriteLine("6.Exit");
+                Console.WriteLine("4.Edit an entry");
+                Console.WriteLine("5.Save file");
+                Console.WriteLine("6.Load file");
+                Console.WriteLine("7.Exit");
                 Console.Write("");
 
                 MenuChoice choice = GetMenuChoice();
@@ -45,6 +46,11 @@ namespace Dagsboksapp
                         SearchEntry();
                         break;
 
+                    case MenuChoice.EditEntry:
+                        Console.WriteLine("");
+                        Console.WriteLine("Chose an entry to edit");
+                        EditEntry();
+                        break;
                     case MenuChoice.SaveFile:
                         Console.WriteLine("");
                         Console.WriteLine("You pressed: Save to file");
@@ -100,7 +106,7 @@ namespace Dagsboksapp
         private static void ViewEntry()
         {
             var entries = diary.ViewEntry()
-                               .OrderBy(e => e.Date) 
+                               .OrderBy(e => e.Date)
                                .ToList();
 
             if (entries.Count == 0)
@@ -131,7 +137,7 @@ namespace Dagsboksapp
                                            DateTimeStyles.None,
                                            out searchDate))
                 {
-                    break; 
+                    break;
                 }
 
                 Console.WriteLine("Incorrect format. Please use YYYY-MM-DD. Try again.");
@@ -173,7 +179,14 @@ namespace Dagsboksapp
             Console.WriteLine("Press any key to continue");
             Console.ReadKey(true);
         }
+        /*private static void EditEntry()
+        {
+            var entries = diary.ViewEntry();
 
+            
+            {
+               
+            }*/
     }
 }
 
