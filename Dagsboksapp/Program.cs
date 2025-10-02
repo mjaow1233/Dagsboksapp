@@ -53,14 +53,12 @@ namespace Dagsboksapp
                         break;
                     case MenuChoice.SaveFile:
                         Console.WriteLine("");
-                        Console.WriteLine("You pressed: Save to file");
-                        Console.WriteLine("");
+;
                         SaveFile();
                         break;
                     case MenuChoice.LoadFile:
                         Console.WriteLine("");
-                        Console.WriteLine("You pressed: Load file");
-                        Console.WriteLine("");
+;
                         LoadFile();
                         break;
 
@@ -167,10 +165,7 @@ namespace Dagsboksapp
         private static void SaveFile()
         {
             diary.Save(dagbokFilePath);
-            Console.WriteLine("");
-            Console.WriteLine($"Saved to {dagbokFilePath}.");
-            Console.WriteLine("Press any key to continue");
-            Console.ReadKey(true);
+            
         }
         private static void LoadFile()
         {
