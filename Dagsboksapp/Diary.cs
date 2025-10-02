@@ -19,28 +19,35 @@ namespace Dagsboksapp
 
         public void AddEntry(string text)
         {
-            Console.WriteLine("Type date (yyyy-MM-dd) or press Enter for today:");
-            string? input = Console.ReadLine();
+            DateTime entryDate;
 
-            try
+            while (true) 
             {
+                Console.Write("Type date (yyyy-MM-dd) or press Enter for today: ");
+                string? input = Console.ReadLine();
+
                 if (string.IsNullOrWhiteSpace(input))
                 {
-                    entries.Add(new Entry { Date = DateTime.Now, Text = text });
+                    
+                    entryDate = DateTime.Now;
+                    break;
                 }
-                else
+
+                try
                 {
-                    DateTime entryDate = DateTime.ParseExact(input, "yyyy-MM-dd",
-                CultureInfo.InvariantCulture);
-
-                    entries.Add(new Entry { Date = entryDate, Text = text });
+                    
+                    entryDate = DateTime.ParseExact(input, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                    break; 
                 }
+                catch (FormatException)
+                {
+                    Console.WriteLine(" Invalid date format. Please use yyyy-MM-dd.");
+                }
+            }
 
-            }
-            catch (FormatException)
-            {
-                Console.WriteLine("Invalid date format. Please use yyyy-MM-dd (e.g. 2025-10-02).");
-            }
+           
+            entries.Add(new Entry { Date = entryDate, Text = text });
+           
         }
 
 

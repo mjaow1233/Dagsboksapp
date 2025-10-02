@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.Design;
+using System.Globalization;
 
 namespace Dagsboksapp
 {
@@ -23,6 +24,7 @@ namespace Dagsboksapp
                 Console.WriteLine("4.Save file");
                 Console.WriteLine("5.Load file");
                 Console.WriteLine("6.Exit");
+                Console.Write("");
 
                 MenuChoice choice = GetMenuChoice();
                 switch (choice)
@@ -61,7 +63,7 @@ namespace Dagsboksapp
                         return;
                     default:
                         Console.WriteLine("");
-                        Console.WriteLine("That's not the right number");
+                        Console.WriteLine("That's not a menu-number");
                         break;
                 }
 
@@ -92,8 +94,7 @@ namespace Dagsboksapp
             }
 
             diary.AddEntry(text);
-            Console.WriteLine("Entry recorded.");
-            SaveFile();
+            Console.WriteLine("Entry added.");
         }
         private static void ViewEntry()
         {
@@ -115,23 +116,32 @@ namespace Dagsboksapp
             }
             
         }
-       
+
         private static void SearchEntry()
         {
-            Console.Write("Enter date (YYYY-MM-DD): ");
-            string? input = Console.ReadLine();
+            DateTime searchDate;
 
-            if (!DateTime.TryParse(input, out DateTime searchDate))
+            while (true)
             {
-                Console.WriteLine("Incorrect format");
-                return;
+                Console.Write("Enter date (YYYY-MM-DD): ");
+                string? input = Console.ReadLine();
+
+                if (DateTime.TryParseExact(input, "yyyy-MM-dd",
+                                           CultureInfo.InvariantCulture,
+                                           DateTimeStyles.None,
+                                           out searchDate))
+                {
+                    break; 
+                }
+
+                Console.WriteLine("Incorrect format. Please use YYYY-MM-DD. Try again.");
             }
 
             var found = diary.FindByDate(searchDate);
 
             if (found.Count == 0)
             {
-                Console.WriteLine("No entries found");
+                Console.WriteLine("No entries found for that date.");
                 return;
             }
 
@@ -144,12 +154,17 @@ namespace Dagsboksapp
         private static void SaveFile()
         {
             diary.Save(dagbokFilePath);
-            Console.WriteLine("Entries saved to file.");
+            Console.WriteLine("");
+            Console.WriteLine($"Saved to {dagbokFilePath}.");
+            Console.WriteLine("Press any key to continue");
+            Console.ReadKey(true);
         }
         private static void LoadFile()
         {
             diary.Load(dagbokFilePath);
             Console.WriteLine("Entries loaded.");
+            Console.WriteLine("Press any key to continue");
+            Console.ReadKey(true);
         }
 
     }
