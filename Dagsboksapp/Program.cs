@@ -7,9 +7,11 @@ namespace Dagsboksapp
     {
         private static readonly string dagbokFilePath = "dagbok.txt";
         private static Diary diary = new Diary();
+        
 
         static void Main(string[] args)
         {
+
             Console.WriteLine("Welcome to your diary app");
             while (true)
             {
@@ -32,7 +34,6 @@ namespace Dagsboksapp
                         break;
                     case MenuChoice.ViewEntry:
                         Console.WriteLine("");
-                        Console.WriteLine("View all entries");
                         ViewEntry();
                         break;
                     case MenuChoice.SearchEntry:
@@ -43,12 +44,14 @@ namespace Dagsboksapp
 
                     case MenuChoice.SaveFile:
                         Console.WriteLine("");
-                        Console.WriteLine("Save to file");
+                        Console.WriteLine("You pressed: Save to file");
+                        Console.WriteLine("");
                         SaveFile();
                         break;
                     case MenuChoice.LoadFile:
                         Console.WriteLine("");
-                        Console.WriteLine("Load file");
+                        Console.WriteLine("You pressed: Load file");
+                        Console.WriteLine("");
                         LoadFile();
                         break;
 
@@ -90,9 +93,11 @@ namespace Dagsboksapp
 
             diary.AddEntry(text);
             Console.WriteLine("Entry recorded.");
+            SaveFile();
         }
         private static void ViewEntry()
         {
+            
             var entries = diary.ViewEntry();
             if (entries.Count == 0)
             {
@@ -101,13 +106,14 @@ namespace Dagsboksapp
                 return;
             }
             Console.WriteLine("");
-            Console.WriteLine("Your diary:");
+            Console.WriteLine($"You have made:{entries.Count} entries");
+            Console.WriteLine("");  
             for (int i = 0; i < entries.Count; i++)
             {
                 Console.WriteLine($"{i + 1}. {entries[i]}");
-                Console.WriteLine("");
+                
             }
-            Console.WriteLine($"You have made:{entries.Count} entries");
+            
         }
        
         private static void SearchEntry()
@@ -138,10 +144,12 @@ namespace Dagsboksapp
         private static void SaveFile()
         {
             diary.Save(dagbokFilePath);
+            Console.WriteLine("Entries saved.");
         }
         private static void LoadFile()
         {
             diary.Load(dagbokFilePath);
+            Console.WriteLine("Entries loaded.");
         }
 
     }

@@ -9,7 +9,7 @@ namespace Dagsboksapp
 
         public override string ToString()
         {
-            return $"{Date:yyyy-MM-dd HH:mm}: {Text}";
+            return $"{Date:yyyy-MM-dd}: {Text}";
         }
     }
 
@@ -22,7 +22,7 @@ namespace Dagsboksapp
             Console.WriteLine("type date (yyyy-MM-dd) or press Enter for today:");
             string? input = Console.ReadLine();
             if (!string.IsNullOrWhiteSpace(input) &&
- DateTime.TryParseExact(input, "yyyy-MM-dd", CultureInfo.InvariantCulture,
+            DateTime.TryParseExact(input, "yyyy-MM-dd", CultureInfo.InvariantCulture,
                         DateTimeStyles.None, out DateTime entryDate))
             {
                 entries.Add(new Entry { Date = entryDate, Text = text });
@@ -35,7 +35,7 @@ namespace Dagsboksapp
             return entries;
 
         }
-        /*public List<Entry> FindByWord(string word)
+        /*public List<Entry> FindByWord(string searchWord)
         {
             List<Entry> foundword = new List<Entry>();
 
@@ -64,30 +64,29 @@ namespace Dagsboksapp
 
             foreach (string line in lines)
             {
-
-                if (line.Length < 20) continue;
-
-                string datePart = line.Substring(0, 19);
-                string textPart = line.Substring(20).Trim();
-
-                if (DateTime.TryParse(datePart, out DateTime entryDate))
+                string[] parts = line.Split('|', 2);
+                if (parts.Length == 2 &&
+                    DateTime.TryParseExact(parts[0], "yyyy-MM-dd",
+                                           CultureInfo.InvariantCulture,
+                                           DateTimeStyles.None,
+                                           out DateTime entryDate))
                 {
                     entries.Add(new Entry
                     {
                         Date = entryDate,
-                        Text = textPart
+                        Text = parts[1]
                     });
                 }
             }
-
         }
+
 
         public void Save(string filePath)
         {
             List<string> lines = new List<string>();
             foreach (Entry entry in entries)
             {
-                lines.Add($"{entry.Date} {entry.Text}");
+                lines.Add($"{entry.Date:yyyy-MM-dd}|{entry.Text}");
             }
             File.WriteAllLines(filePath, lines);
         }
