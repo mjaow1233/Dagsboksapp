@@ -1,6 +1,6 @@
-﻿using System.ComponentModel.Design;
+﻿
 using System.Globalization;
-using System.Security.Cryptography;
+
 
 namespace Dagsboksapp
 {
@@ -17,69 +17,82 @@ namespace Dagsboksapp
             Console.WriteLine("Welcome to your diary app");
             while (true)
             {
-                Console.WriteLine("");
-                Console.WriteLine("1. Add an entry");
-                Console.WriteLine("2. Show all entries");
-                Console.WriteLine("3. Search for an entry");
-                Console.WriteLine("4. Edit an entry");
-                Console.WriteLine("5. Delete an entry");
-                Console.WriteLine("6. Save file");
-                Console.WriteLine("7. Load file");
-                Console.WriteLine("8. Exit");
-                Console.Write("");
-
-                MenuChoice choice = GetMenuChoice();
-                switch (choice)
+                try
                 {
-                    case MenuChoice.AddEntry:
-                        Console.WriteLine("");
-                        Console.WriteLine("Adding a new entry");
-                        AddEntry();
-                        break;
-                    case MenuChoice.ViewEntry:
-                        Console.WriteLine("");
-                        ViewEntry();
-                        break;
-                    case MenuChoice.SearchEntry:
-                        Console.WriteLine("");
-                        Console.WriteLine("Search for an entry");
-                        SearchEntry();
-                        break;
+                    Console.WriteLine("");
+                    Console.WriteLine("1. Add an entry");
+                    Console.WriteLine("2. Show all entries");
+                    Console.WriteLine("3. Search for an entry");
+                    Console.WriteLine("4. Edit an entry");
+                    Console.WriteLine("5. Delete an entry");
+                    Console.WriteLine("6. Save file");
+                    Console.WriteLine("7. Load file");
+                    Console.WriteLine("8. Exit");
+                    Console.Write("");
 
-                    case MenuChoice.EditEntry:
-                        Console.WriteLine("");
-                        Console.WriteLine("Chose an entry to edit");
-                        EditEntry();
-                        break;
-                    case MenuChoice.DeleteEntry:
-                        Console.WriteLine("");
-                        Console.WriteLine("Chose an entry to delete");
-                        DeleteEntry();
-                        break;
+                    MenuChoice choice = GetMenuChoice();
+                    switch (choice)
+                    {
+                        case MenuChoice.AddEntry:
+                            Console.WriteLine("");
+                            Console.WriteLine("Adding a new entry");
+                            AddEntry();
+                            break;
+                        case MenuChoice.ViewEntry:
+                            Console.WriteLine("");
+                            ViewEntry();
+                            break;
+                        case MenuChoice.SearchEntry:
+                            Console.WriteLine("");
+                            Console.WriteLine("Search for an entry");
+                            SearchEntry();
+                            break;
 
-                    case MenuChoice.SaveFile:
-                        Console.WriteLine("");
-                        ;
-                        SaveFile();
-                        break;
-                    case MenuChoice.LoadFile:
-                        Console.WriteLine("");
-                        ;
-                        LoadFile();
-                        break;
+                        case MenuChoice.EditEntry:
+                            Console.WriteLine("");
+                            Console.WriteLine("Pick an entry to edit");
+                            EditEntry();
+                            break;
+                        case MenuChoice.DeleteEntry:
+                            Console.WriteLine("");
+                            Console.WriteLine("Pick an entry to delete");
+                            DeleteEntry();
+                            break;
 
-                    case MenuChoice.Exit:
-                        Console.WriteLine("");
-                        Console.WriteLine("Exit the program");
-                        return;
-                    default:
-                        Console.WriteLine("");
-                        Console.WriteLine("That's not a menu-number");
-                        break;
+                        case MenuChoice.SaveFile:
+                            Console.WriteLine("");
+                            
+                            SaveFile();
+                            break;
+                        case MenuChoice.LoadFile:
+                            Console.WriteLine("");
+                            ;
+                            LoadFile();
+                            break;
+
+                        case MenuChoice.Exit:
+                            Console.WriteLine("");
+                            Console.WriteLine("Exit the program");
+                            return;
+                        default:
+                            Console.WriteLine("");
+                            Console.WriteLine("That's not a menu-number");
+                            break;
+                    }
+
+
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error: {ex.Message}");
+                    Console.WriteLine("Press any key to continue...");
+                    Console.ReadKey(true);
                 }
 
             }
         }
+
+
 
 
         private static MenuChoice GetMenuChoice()
@@ -247,13 +260,13 @@ namespace Dagsboksapp
                 Console.WriteLine("Invalid input, try again.");
             }
 
-            if (diary.RemoveEntry(choice - 1))
+            if (diary.DeleteEntry(choice - 1))
             {
-                Console.WriteLine("Entry removed.");
+                Console.WriteLine("Entry Deleted.");
             }
             else
             {
-                Console.WriteLine("Failed to remove entry.");
+                Console.WriteLine("Failed to delete entry.");
             }
         }
 

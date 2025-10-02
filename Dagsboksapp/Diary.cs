@@ -224,15 +224,7 @@ namespace Dagsboksapp
             }
         }
 
-        public bool RemoveEntry(int index)
-        {
-            if (index >= 0 && index < entries.Count)
-            {
-                entries.RemoveAt(index); 
-                return true;            
-            }
-            return false; 
-        }
+     
 
     }
 }
