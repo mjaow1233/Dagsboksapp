@@ -17,6 +17,7 @@ namespace Dagsboksapp
     {
         private List<Entry> entries = new List<Entry>();
 
+        private Dictionary<DateTime, List<Entry>> entryDict = new Dictionary<DateTime, List<Entry>>();
         public void AddEntry(string text)
         {
             DateTime entryDate;
@@ -28,27 +29,36 @@ namespace Dagsboksapp
 
                 if (string.IsNullOrWhiteSpace(input))
                 {
-
-                    entryDate = DateTime.Now;
+                    entryDate = DateTime.Now.Date; 
                     break;
                 }
 
                 try
                 {
-
                     entryDate = DateTime.ParseExact(input, "yyyy-MM-dd", CultureInfo.InvariantCulture);
                     break;
                 }
                 catch (FormatException)
                 {
-                    Console.WriteLine(" Invalid date format. Please use yyyy-MM-dd.");
+                    Console.WriteLine("Invalid date format. Please use yyyy-MM-dd.");
                 }
             }
 
+        
+            var newEntry = new Entry { Date = entryDate, Text = text };
 
-            entries.Add(new Entry { Date = entryDate, Text = text });
+          
+            entries.Add(newEntry);
 
+            if (!entryDict.ContainsKey(entryDate.Date))
+            {
+                entryDict[entryDate.Date] = new List<Entry>();
+            }
+            entryDict[entryDate.Date].Add(newEntry);
+
+            Console.WriteLine("Entry added successfully.");
         }
+
 
 
 
@@ -84,12 +94,11 @@ namespace Dagsboksapp
                 }
 
                 string[] lines = File.ReadAllLines(filePath);
-
                 List<Entry> fileEntries = new List<Entry>();
+
                 foreach (string line in lines)
                 {
-                    if (line.Length < 11) continue;
-
+                    if (line.Length < 11) continue; // Minsta längd för "yyyy-MM-dd: "
                     string datePart = line.Substring(0, 10);
                     string textPart = line.Substring(11).Trim();
 
@@ -106,12 +115,25 @@ namespace Dagsboksapp
                     Console.WriteLine("Press 1 to merge current entries with file entries.");
                     Console.WriteLine("Press 2 to overwrite current entries with file entries.");
                     string? input = Console.ReadLine();
+
                     if (input == "1")
                     {
-                        entries.AddRange(fileEntries);
+
+                        foreach (var entry in fileEntries)
+                        {
+                            if (!entries.Any(x => x.Date.Date == entry.Date.Date && x.Text == entry.Text)) //anti dubletter.
+                            {
+                                entries.Add(entry);
+                            }
+                        }
+                    }
+                    else if (input == "2")
+                    {
+                        entries = fileEntries;
                     }
                     else
                     {
+                        Console.WriteLine("Invalid choice. Overwriting by default.");
                         entries = fileEntries;
                     }
                 }
@@ -120,15 +142,16 @@ namespace Dagsboksapp
                     entries = fileEntries;
                 }
 
-                Console.WriteLine($"{filePath} loaded successfully.");
+                Console.WriteLine($"Diary loaded from {filePath}.");
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error loading file: {ex.Message}");
+                File.AppendAllText("error.log", $"{DateTime.Now}: {ex}");
             }
             finally
             {
-                Console.WriteLine("Press any key to continue");
+                Console.WriteLine("Press any key to continue.");
                 Console.ReadKey(true);
             }
         }
@@ -136,57 +159,53 @@ namespace Dagsboksapp
         {
             try
             {
-                List<Entry> linesToSave = new List<Entry>(entries);
+
+                var linesToSave = entries.OrderBy(entry => entry.Date)
+                                         .Select(entry => entry.ToString())
+                                         .ToList();
+
                 if (File.Exists(filePath))
                 {
-                    Console.WriteLine($"File '{filePath}' already exists.");
-                    Console.WriteLine("Press 1 to merge with existing file entries.");
-                    Console.WriteLine("Press 2 to overwrite the file.");
+                    Console.WriteLine("A file already exists");
+                    Console.WriteLine("Press 1 to merge current entries with file entries.");
+                    Console.WriteLine("Press 2 to overwrite current entries with file entries.");
                     string? input = Console.ReadLine();
 
                     if (input == "1")
                     {
-
-
-                        var existingLines = File.ReadAllLines(filePath);
-                        foreach (var line in existingLines)
+                        string[] existingLines = File.ReadAllLines(filePath);
+                        foreach (string line in existingLines)
                         {
-                            int colonIndex = line.IndexOf(':');
-                            if (colonIndex == -1) continue;
-
-                            string datePart = line.Substring(0, colonIndex).Trim();
-                            string textPart = line.Substring(colonIndex + 1).Trim();
-
+                            if (line.Length < 11) continue;
+                            string datePart = line.Substring(0, 10);
+                            string textPart = line.Substring(11).Trim();
                             if (DateTime.TryParseExact(datePart, "yyyy-MM-dd", CultureInfo.InvariantCulture,
                                                        DateTimeStyles.None, out DateTime entryDate))
                             {
-
-                                if (!linesToSave.Any(e => e.Date.Date == entryDate && e.Text == textPart))
+                                if (!linesToSave.Any(x => x.StartsWith(entryDate.ToString("yyyy-MM-dd")) && x.Contains(textPart)))
                                 {
-                                    linesToSave.Add(new Entry { Date = entryDate, Text = textPart });
+                                    linesToSave.Add($"{entryDate:yyyy-MM-dd}: {textPart}");
                                 }
                             }
                         }
                     }
-                    else if (input != "2")
-                    {
-                        Console.WriteLine("Invalid choice, defaulting to overwrite.");
-                    }
                 }
 
-
-                File.WriteAllLines(filePath, linesToSave.Select(e => e.ToString()).ToArray());
-                Console.WriteLine($"Saved {linesToSave.Count} entries to {filePath}.");
-                Console.WriteLine("Press any key to continue");
-                Console.ReadKey(true);
+                File.WriteAllLines(filePath, linesToSave);
+                Console.WriteLine($"Diary saved to {filePath}.");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Could not save to file: {ex.Message}");
+                Console.WriteLine($"Could not save file: {ex.Message}");
+                File.AppendAllText("error.log", $"{DateTime.Now}: {ex}");
+            }
+            finally
+            {
+                Console.WriteLine("Press any key to continue.");
+                Console.ReadKey(true);
             }
         }
     }
 }
-
 
 
